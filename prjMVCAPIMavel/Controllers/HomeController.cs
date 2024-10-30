@@ -1,12 +1,13 @@
 using System.Diagnostics;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using prjMVCAPIMavel.Models;
 using prjMVCAPIMavel.Services;
 
 namespace prjMVCAPIMavel.Controllers
 {
-    
+    [Authorize(Roles = "Admin")] // This will enforce that all actions require authentication
     public class HomeController : Controller
     {
         private readonly ApiService _apiService;

@@ -1,4 +1,5 @@
 ﻿using prjMVCAPIMavel.Models;
+using System.Text.Json;
 
 namespace prjMVCAPIMavel.Services
 {
@@ -39,5 +40,29 @@ namespace prjMVCAPIMavel.Services
             var response = await _httpClient.DeleteAsync($"/users/{username}");
             response.EnsureSuccessStatusCode();
         }
+        // Method to log in a user
+        public async Task<string> LoginAsync(LoginViewModel userLoginDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/login", userLoginDto);
+
+            // Ensure the response is successful
+            response.EnsureSuccessStatusCode();
+
+            // Read the response as a string
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            // Deserialize the response to a dictionary
+            var result = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
+
+            // Check if the token key exists (note the lowercase 'token')
+            if (result != null && result.TryGetValue("token", out var token)) 
+            {
+                return token; // Return the token from the response
+            }
+
+            throw new Exception("Token not found in response"); // Throw an exception if the token is not found
+        }
+
+
     }
 }

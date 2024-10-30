@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using prjMVCAPIMavel.Services;
 
 namespace prjMVCAPIMavel
@@ -7,11 +8,24 @@ namespace prjMVCAPIMavel
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // Configure cookie authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login"; // Redirect here if not authenticated
+                });
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient<ApiService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7285");
+            });
+            // Add session services
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
             var app = builder.Build();
 
@@ -27,7 +41,8 @@ namespace prjMVCAPIMavel
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            // Use authentication and authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
