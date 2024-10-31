@@ -44,7 +44,7 @@ namespace prjMVCAPIMavel
             // Use authentication and authorization
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();//added this
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
