@@ -89,5 +89,11 @@ namespace prjMVCAPIMavel.Controllers
             // Redirect to the login page
             return RedirectToAction("Login", "Account");
         }
+        [HttpGet]
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl; // Pass the return URL if you want to use it in your view
+            return View(); // This will return the AccessDenied.cshtml view
+        }
     }
 }
